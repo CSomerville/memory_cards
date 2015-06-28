@@ -20,8 +20,10 @@ Memoire.ScoresView = Backbone.View.extend({
   },
 
   setHeight: function(ctr){
-    var height = $('#scores').height();
-    this.$el.css({'top': height - ctr});
+    var displayHeight = $('#scores').height();
+    var scrollingHeight = this.$el.height();
+    var difference = displayHeight + scrollingHeight
+    this.$el.css({'top': displayHeight - ctr % difference});
   },
 
   render: function(){
