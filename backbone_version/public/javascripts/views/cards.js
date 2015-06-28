@@ -3,7 +3,6 @@ var Memoire = Memoire || {};
 Memoire.CardsView = Backbone.View.extend({
 
   initialize: function(){
-    $('body').append(this.el);
     this.shuffleCards();
   },
 
@@ -41,6 +40,13 @@ Memoire.CardsView = Backbone.View.extend({
         }
       })
     }
+  },
+  
+  close: function(){
+    this.subViews.forEach(function(view){
+      view.close();
+    })
+    this.remove();
   }
 })
 

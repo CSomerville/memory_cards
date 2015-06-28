@@ -27,5 +27,9 @@ Memoire.CardView = Backbone.View.extend({
     } else {
       this.$el.html('<img src="./images/' + this.image + '">');
     }
+  },
+
+  close: function(){
+    this.remove();
   }
 })

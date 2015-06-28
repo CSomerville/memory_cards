@@ -1,1 +1,1 @@
-new Memoire.CardsView();
+new Memoire.Router();
