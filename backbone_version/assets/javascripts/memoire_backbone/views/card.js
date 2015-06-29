@@ -12,7 +12,7 @@ Memoire.CardView = Backbone.View.extend({
 
   image: '',
 
-  className: 'col-xs-4 col-sm-2',
+  className: 'one-card col-xs-4 col-sm-2',
 
   flipped: true,
 

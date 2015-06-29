@@ -1,0 +1,75 @@
+@main_everything: #403643;
+@my_slate: #363D43;
+
+
+body {
+  color: @main_everything;
+  background-image: url('../../images/leaf.jpg');
+  background-size: cover;
+  font-family: 'Josefin Slab';
+}
+
+.one-card {
+  img {
+    max-width: 100%;
+    max-height: 33vh;
+  }
+}
+.all-cards {
+  text-align: center;
+}
+
+.hi-scores-head-and-foot {
+  height: 20%;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+}
+
+.hi-scores {
+  text-align: center;
+  header {
+    .hi-scores-head-and-foot;
+    a {
+      color: @main_everything;
+      text-decoration: none;
+      border-style: solid;
+      border-width: 3px;
+      border-radius: 5px;
+      padding: 1% 4% 2% 4%;
+    }
+    a:hover {
+      background-color: @main_everything;
+      color: white;
+
+    }
+    h1 {
+      line-height: 12px;
+    }
+  }
+  footer {
+    .hi-scores-head-and-foot; 
+    a {
+      text-decoration: none;
+      color: @main_everything;
+    }  
+  }
+}
+
+#scores {
+  height: 60%;
+  overflow: hidden;
+}
+
+.scrolling {
+  position: relative;
+  text-align: center;
+}
+
+.white-screen {
+  width: 100%;
+  z-index: -1;
+  background-color: rgba(255,255,255,0.8);
+  position: absolute;
+  top: 0;
+}

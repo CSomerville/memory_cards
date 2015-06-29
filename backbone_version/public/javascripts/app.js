@@ -17,8 +17,13 @@ Memoire.Router = Backbone.Router.extend({
   },
 
   hiScores: function(){
+    if (this.view) this.view.close();
     this.view = new Memoire.HiScoresView();
     this.view.render();
+  },
+
+  play: function(){
+    if (this.view) this.view.close();
   }
 
 })
@@ -44,7 +49,7 @@ Memoire.CardView = Backbone.View.extend({
 
   image: '',
 
-  className: 'col-xs-4 col-sm-2',
+  className: 'one-card col-xs-4 col-sm-2',
 
   flipped: true,
 
@@ -241,7 +246,6 @@ Memoire.ScoresView = Backbone.View.extend({
   initialize: function(){
     this.listenTo(this.collection, 'add', this.addOne);
     this.collection.fetch();
-    console.log(this.collection.model)
   },
 
   template: $('[data-template="scrolling"]').text(),
