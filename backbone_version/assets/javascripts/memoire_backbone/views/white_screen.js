@@ -9,7 +9,6 @@ Memoire.WhiteScreenView = Backbone.View.extend({
   },
 
   render: function() {
-    console.log('in here')
     this.adjustHeight();
     $(window).on('resize', function(){
       this.adjustHeight();

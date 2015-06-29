@@ -9,5 +9,11 @@
     "morgan": "^1.6.0",
     "mustache": "^2.1.2",
     "pg": "^4.4.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-less": "^3.0.3",
+    "gulp-uglify": "^1.2.0"
   }
 }

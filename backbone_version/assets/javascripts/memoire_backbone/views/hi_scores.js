@@ -23,7 +23,7 @@ Memoire.HiScoresView = Backbone.View.extend({
 
     $('body').append(this.el);
 
-    var scores = new Memoire.ScoresView({collection: new Memoire.ScoresCollection()});
+    var scores = new Memoire.ScoresView({collection: new Memoire.ScoresCollection({model: Memoire.ScoreModel})});
     this.subViews.push(scores);
     this.$el.find('#scores').append(scores.el);
     scores.render();

@@ -4,6 +4,7 @@ Memoire.ScoresView = Backbone.View.extend({
   initialize: function(){
     this.listenTo(this.collection, 'add', this.addOne);
     this.collection.fetch();
+    console.log(this.collection.model)
   },
 
   template: $('[data-template="scrolling"]').text(),
