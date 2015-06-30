@@ -2,6 +2,10 @@ var Memoire = Memoire || {};
 
 Memoire.HiScoresView = Backbone.View.extend({
 
+  initialize: function(){
+    this.subViews = [];
+  },
+
   template: $('[data-template="hi-scores"]').text(),
 
   className: 'hi-scores container-fluid',
@@ -10,9 +14,9 @@ Memoire.HiScoresView = Backbone.View.extend({
     this.$el.css({ 'height': $(window).innerHeight() });
   },
 
-  subViews: [],
-
   render: function(){
+
+    console.log("hi scores subviews: " + this.subViews)
 
     this.$el.html(this.template);
 
@@ -36,6 +40,7 @@ Memoire.HiScoresView = Backbone.View.extend({
 
     var whiteScreen = new Memoire.WhiteScreenView();
     this.subViews.push(whiteScreen);
+    whiteScreen.$el.css({'z-index': '-1'});
     whiteScreen.render();
   },
 

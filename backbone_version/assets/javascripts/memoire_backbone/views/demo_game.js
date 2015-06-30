@@ -2,27 +2,26 @@ var Memoire = Memoire || {};
 
 Memoire.DemoGameView = Backbone.View.extend({
   initialize: function(){
+    this.subViews = [];
     $('body').append(this.el);
   },
 
-  subViews: [],
-
   playDemo: function(){
 
-    var game = setInterval(function(){
+    this.game = setInterval(function(){
 
       var unflipped = _.filter($('img'), function(image){ 
         return $(image).attr('src') === "./images/businesscard_back_babasouk.jpg" 
       })
 
       if (unflipped.length === 0) {
-        clearInterval(game);
+        clearInterval(this.game);
       } else {
         $(_.sample(unflipped)).trigger("click");
       }
 
 
-    }, 2000)
+    }.bind(this), 2000)
   },
 
   render: function(){
@@ -36,6 +35,7 @@ Memoire.DemoGameView = Backbone.View.extend({
     this.subViews.forEach(function(view){
       view.close();
     })
+    if (this.game) clearInterval(this.game);
     this.remove();
   }
 })

@@ -2,13 +2,12 @@ var Memoire = Memoire || {};
 
 Memoire.ScoresView = Backbone.View.extend({
   initialize: function(){
+    this.subViews = [];
     this.listenTo(this.collection, 'add', this.addOne);
     this.collection.fetch();
   },
 
   template: $('[data-template="scrolling"]').text(),
-
-  subViews: [],
 
   className: 'scrolling',
 

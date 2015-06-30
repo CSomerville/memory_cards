@@ -19,11 +19,15 @@ Memoire.Router = Backbone.Router.extend({
   hiScores: function(){
     if (this.view) this.view.close();
     this.view = new Memoire.HiScoresView();
+    console.log(this.view);
     this.view.render();
   },
 
   play: function(){
     if (this.view) this.view.close();
+    this.view = new Memoire.PlayGameView();
+    console.log(this.view);
+    this.view.render();
   }
 
 })
@@ -75,14 +79,13 @@ var Memoire = Memoire || {};
 Memoire.CardsView = Backbone.View.extend({
 
   initialize: function(){
+    this.subViews = [];
     this.shuffleCards();
   },
 
   events: {
     'click': 'checkCards'
   },
-
-  subViews: [],
 
   className: 'all-cards',
 
@@ -108,9 +111,9 @@ Memoire.CardsView = Backbone.View.extend({
     if (flippedOverCards.length % 2 === 0) {
       _.each(_.groupBy(flippedOverCards, 'image'), function(images){
         if (images.length === 1) {
-          window.setTimeout(images[0].flip.bind(images[0]), 1000);
+          this.timer = window.setTimeout(images[0].flip.bind(images[0]), 1000);
         }
-      })
+      }.bind(this))
     }
   },
   
@@ -118,6 +121,7 @@ Memoire.CardsView = Backbone.View.extend({
     this.subViews.forEach(function(view){
       view.close();
     })
+    window.clearTimeout(this.timer);
     this.remove();
   }
 })
@@ -132,29 +136,55 @@ Memoire.CardsView = Backbone.View.extend({
 
 var Memoire = Memoire || {};
 
+Memoire.CounterView = Backbone.View.extend({
+
+  className: 'counter',
+
+  tagName: 'h1',
+
+  render: function(){
+    var ctr = 3;
+    this.$el.text(ctr);
+    this.count = setInterval(function(){
+      ctr--;
+      if (ctr < 1) {
+        this.trigger('countFinished')
+        clearInterval(this.count);
+      } else {
+        this.$el.text(ctr);
+      }
+    }.bind(this), 1000)
+  },
+
+  close: function(){
+    clearInterval(this.count);
+    this.remove();
+  }
+})
+var Memoire = Memoire || {};
+
 Memoire.DemoGameView = Backbone.View.extend({
   initialize: function(){
+    this.subViews = [];
     $('body').append(this.el);
   },
 
-  subViews: [],
-
   playDemo: function(){
 
-    var game = setInterval(function(){
+    this.game = setInterval(function(){
 
       var unflipped = _.filter($('img'), function(image){ 
         return $(image).attr('src') === "./images/businesscard_back_babasouk.jpg" 
       })
 
       if (unflipped.length === 0) {
-        clearInterval(game);
+        clearInterval(this.game);
       } else {
         $(_.sample(unflipped)).trigger("click");
       }
 
 
-    }, 2000)
+    }.bind(this), 2000)
   },
 
   render: function(){
@@ -168,12 +198,17 @@ Memoire.DemoGameView = Backbone.View.extend({
     this.subViews.forEach(function(view){
       view.close();
     })
+    if (this.game) clearInterval(this.game);
     this.remove();
   }
 })
 var Memoire = Memoire || {};
 
 Memoire.HiScoresView = Backbone.View.extend({
+
+  initialize: function(){
+    this.subViews = [];
+  },
 
   template: $('[data-template="hi-scores"]').text(),
 
@@ -183,9 +218,9 @@ Memoire.HiScoresView = Backbone.View.extend({
     this.$el.css({ 'height': $(window).innerHeight() });
   },
 
-  subViews: [],
-
   render: function(){
+
+    console.log("hi scores subviews: " + this.subViews)
 
     this.$el.html(this.template);
 
@@ -209,11 +244,71 @@ Memoire.HiScoresView = Backbone.View.extend({
 
     var whiteScreen = new Memoire.WhiteScreenView();
     this.subViews.push(whiteScreen);
+    whiteScreen.$el.css({'z-index': '-1'});
     whiteScreen.render();
   },
 
   close: function(){
     this.subViews.forEach(function(view){
+      view.close();
+    });
+    this.remove();
+  }
+})
+var Memoire = Memoire || {};
+
+Memoire.PlayGameView = Backbone.View.extend({
+
+  initialize: function(){
+    this.subViews = [];
+    this.model = new Memoire.ScoreModel({
+      turns: 0,
+      elapsed_time: new Date()
+    })
+  },
+
+  adjustHeight: function(){
+    this.$el.css({ 'height': $(window).innerHeight() });
+  },
+
+  className: 'game container-fluid',
+
+  play: function(){
+    var whiteScreen = new Memoire.WhiteScreenView();
+    this.subViews.push(whiteScreen);
+    whiteScreen.render();
+
+    var counter = new Memoire.CounterView();
+    this.subViews.push(counter);
+    counter.render();
+    this.$el.append(counter.el);
+
+    counter.on('countFinished', function(){
+      counter.close();
+      whiteScreen.close();
+    }.bind(this))
+
+  },
+
+  render: function(){
+
+    this.adjustHeight();
+    $(window).on('resize', function(){
+      this.adjustHeight();
+    }.bind(this))
+
+    $('body').append(this.el);
+
+    var cards = new Memoire.CardsView();
+    this.subViews.push(cards);
+    cards.render();
+    this.$el.html(cards.el);
+
+    this.play();
+  },
+
+  close: function(){
+    this.subViews.forEach(function(view, i){
       view.close();
     });
     this.remove();
@@ -244,13 +339,12 @@ var Memoire = Memoire || {};
 
 Memoire.ScoresView = Backbone.View.extend({
   initialize: function(){
+    this.subViews = [];
     this.listenTo(this.collection, 'add', this.addOne);
     this.collection.fetch();
   },
 
   template: $('[data-template="scrolling"]').text(),
-
-  subViews: [],
 
   className: 'scrolling',
 

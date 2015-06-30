@@ -3,14 +3,13 @@ var Memoire = Memoire || {};
 Memoire.CardsView = Backbone.View.extend({
 
   initialize: function(){
+    this.subViews = [];
     this.shuffleCards();
   },
 
   events: {
     'click': 'checkCards'
   },
-
-  subViews: [],
 
   className: 'all-cards',
 
@@ -36,9 +35,9 @@ Memoire.CardsView = Backbone.View.extend({
     if (flippedOverCards.length % 2 === 0) {
       _.each(_.groupBy(flippedOverCards, 'image'), function(images){
         if (images.length === 1) {
-          window.setTimeout(images[0].flip.bind(images[0]), 1000);
+          this.timer = window.setTimeout(images[0].flip.bind(images[0]), 1000);
         }
-      })
+      }.bind(this))
     }
   },
   
@@ -46,6 +45,7 @@ Memoire.CardsView = Backbone.View.extend({
     this.subViews.forEach(function(view){
       view.close();
     })
+    window.clearTimeout(this.timer);
     this.remove();
   }
 })

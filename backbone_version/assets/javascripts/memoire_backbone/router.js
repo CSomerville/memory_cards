@@ -19,11 +19,15 @@ Memoire.Router = Backbone.Router.extend({
   hiScores: function(){
     if (this.view) this.view.close();
     this.view = new Memoire.HiScoresView();
+    console.log(this.view);
     this.view.render();
   },
 
   play: function(){
     if (this.view) this.view.close();
+    this.view = new Memoire.PlayGameView();
+    console.log(this.view);
+    this.view.render();
   }
 
 })
