@@ -19,14 +19,12 @@ Memoire.Router = Backbone.Router.extend({
   hiScores: function(){
     if (this.view) this.view.close();
     this.view = new Memoire.HiScoresView();
-    console.log(this.view);
     this.view.render();
   },
 
   play: function(){
     if (this.view) this.view.close();
     this.view = new Memoire.PlayGameView();
-    console.log(this.view);
     this.view.render();
   }
 
@@ -44,20 +42,23 @@ var Memoire = Memoire || {};
 Memoire.CardView = Backbone.View.extend({
 
   initialize: function(options){
+    this.clickable = true;
+    this.flipped = true;
+    this.matched = false;
     _.extend(this, _.pick(options, 'image'))
   },
 
   events: {
-    'click img': 'flip'
+    'click img': 'touchCard'
   },
-
-  image: '',
 
   className: 'one-card col-xs-4 col-sm-2',
 
-  flipped: true,
+  touchCard: function(){
+    if (this.clickable && !this.matched) this.flip();
+  },
 
-  flip: function(){
+  flip: function(){     
     this.flipped = this.flipped === true ? false : true;
     this.render();
   },
@@ -81,6 +82,7 @@ Memoire.CardsView = Backbone.View.extend({
   initialize: function(){
     this.subViews = [];
     this.shuffleCards();
+    this.clickable = true;
   },
 
   events: {
@@ -105,15 +107,81 @@ Memoire.CardsView = Backbone.View.extend({
     }.bind(this))
   },
 
-  checkCards: function(){
-    var flippedOverCards = _.filter(this.subViews, function(card){ if (card.flipped === false) return card});
+  setClickabilityOnAll: function(clickable){
+    this.subViews.forEach(function(view){
+      view.clickable = clickable;
+    })
+    this.clickable = clickable;
+  },
 
-    if (flippedOverCards.length % 2 === 0) {
-      _.each(_.groupBy(flippedOverCards, 'image'), function(images){
-        if (images.length === 1) {
-          this.timer = window.setTimeout(images[0].flip.bind(images[0]), 1000);
+  flipAll: function(){
+    this.subViews.forEach(function(view){
+      view.flip();
+    })
+  },
+
+  revealCards: function(){
+
+    this.flipAll();
+    this.setClickabilityOnAll(false);
+
+    this.timer = window.setTimeout(function(){
+      this.flipAll();
+      this.setClickabilityOnAll(true);
+    }.bind(this), 5000);
+
+  },
+
+  cleanUpMismatched: function(mismatched){
+
+    this.setClickabilityOnAll(false);
+
+    this.trigger('turnTaken');
+
+    this.timer = window.setTimeout(function(){
+      mismatched.forEach(function(card) { card.flip() });
+      this.setClickabilityOnAll(true);
+    }.bind(this), 1000)
+
+  },
+
+  setMatched: function(matched){
+    _.each(_.flatten(matched), function(card){ card.matched = true })
+  },
+
+  checkCards: function(){
+
+    if (this.clickable) {
+
+      var flippedOverCards = _.filter(this.subViews, function(card){ if (card.flipped === false) return card});
+
+      if (flippedOverCards.length % 2 === 0) {
+
+        var matched = [];
+        var mismatched = [];
+
+        _.each(_.groupBy(flippedOverCards, 'image'), function(images){
+
+          if (images.length === 1) {
+            mismatched.push(images[0]);
+          }
+
+          if (images.length === 2) {
+            matched.push(images);
+          }
+        });
+
+        if (mismatched.length > 0) {
+          this.cleanUpMismatched(mismatched);
         }
-      }.bind(this))
+        if (matched.length > 0) {
+          this.setMatched(matched);
+        }
+        if (matched.length === 9) {
+          this.clickable = false;
+          this.trigger('gameComplete');
+        }
+      }      
     }
   },
   
@@ -220,8 +288,6 @@ Memoire.HiScoresView = Backbone.View.extend({
 
   render: function(){
 
-    console.log("hi scores subviews: " + this.subViews)
-
     this.$el.html(this.template);
 
     this.adjustHeight();
@@ -262,7 +328,7 @@ Memoire.PlayGameView = Backbone.View.extend({
   initialize: function(){
     this.subViews = [];
     this.model = new Memoire.ScoreModel({
-      turns: 0,
+      turns: 1,
       elapsed_time: new Date()
     })
   },
@@ -274,6 +340,7 @@ Memoire.PlayGameView = Backbone.View.extend({
   className: 'game container-fluid',
 
   play: function(){
+
     var whiteScreen = new Memoire.WhiteScreenView();
     this.subViews.push(whiteScreen);
     whiteScreen.render();
@@ -286,6 +353,16 @@ Memoire.PlayGameView = Backbone.View.extend({
     counter.on('countFinished', function(){
       counter.close();
       whiteScreen.close();
+      var cards = _.find(this.subViews, function(view) { return _.has( view, 'subViews') })
+      cards.revealCards();
+
+      cards.on('turnTaken', function(){
+        this.model.set('turns', this.model.get('turns') + 1 )
+      }.bind(this))
+
+      cards.on('gameComplete', function(){
+        console.log('game done');
+      })
     }.bind(this))
 
   },
@@ -299,7 +376,7 @@ Memoire.PlayGameView = Backbone.View.extend({
 
     $('body').append(this.el);
 
-    var cards = new Memoire.CardsView();
+    cards = new Memoire.CardsView();
     this.subViews.push(cards);
     cards.render();
     this.$el.html(cards.el);

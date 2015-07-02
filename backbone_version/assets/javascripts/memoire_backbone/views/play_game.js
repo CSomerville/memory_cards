@@ -5,7 +5,7 @@ Memoire.PlayGameView = Backbone.View.extend({
   initialize: function(){
     this.subViews = [];
     this.model = new Memoire.ScoreModel({
-      turns: 0,
+      turns: 1,
       elapsed_time: new Date()
     })
   },
@@ -17,6 +17,7 @@ Memoire.PlayGameView = Backbone.View.extend({
   className: 'game container-fluid',
 
   play: function(){
+
     var whiteScreen = new Memoire.WhiteScreenView();
     this.subViews.push(whiteScreen);
     whiteScreen.render();
@@ -29,6 +30,16 @@ Memoire.PlayGameView = Backbone.View.extend({
     counter.on('countFinished', function(){
       counter.close();
       whiteScreen.close();
+      var cards = _.find(this.subViews, function(view) { return _.has( view, 'subViews') })
+      cards.revealCards();
+
+      cards.on('turnTaken', function(){
+        this.model.set('turns', this.model.get('turns') + 1 )
+      }.bind(this))
+
+      cards.on('gameComplete', function(){
+        console.log('game done');
+      })
     }.bind(this))
 
   },
@@ -42,7 +53,7 @@ Memoire.PlayGameView = Backbone.View.extend({
 
     $('body').append(this.el);
 
-    var cards = new Memoire.CardsView();
+    cards = new Memoire.CardsView();
     this.subViews.push(cards);
     cards.render();
     this.$el.html(cards.el);

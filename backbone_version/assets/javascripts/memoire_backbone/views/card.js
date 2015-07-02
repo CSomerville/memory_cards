@@ -3,20 +3,23 @@ var Memoire = Memoire || {};
 Memoire.CardView = Backbone.View.extend({
 
   initialize: function(options){
+    this.clickable = true;
+    this.flipped = true;
+    this.matched = false;
     _.extend(this, _.pick(options, 'image'))
   },
 
   events: {
-    'click img': 'flip'
+    'click img': 'touchCard'
   },
-
-  image: '',
 
   className: 'one-card col-xs-4 col-sm-2',
 
-  flipped: true,
+  touchCard: function(){
+    if (this.clickable && !this.matched) this.flip();
+  },
 
-  flip: function(){
+  flip: function(){     
     this.flipped = this.flipped === true ? false : true;
     this.render();
   },

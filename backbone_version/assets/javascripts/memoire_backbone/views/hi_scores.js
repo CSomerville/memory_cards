@@ -16,8 +16,6 @@ Memoire.HiScoresView = Backbone.View.extend({
 
   render: function(){
 
-    console.log("hi scores subviews: " + this.subViews)
-
     this.$el.html(this.template);
 
     this.adjustHeight();
