@@ -1,6 +1,8 @@
 var pg = require('pg');
 
-var conString = "postgres://root@localhost/memory_cards";
+var conString = "postgres://localhost/memory_cards";
+
+console.log(pg.defaults);
 
 var client = new pg.Client(conString);
 client.connect(function(err){
