@@ -2,7 +2,7 @@ var pg = require('pg');
 
 var conString = "postgres://localhost/memory_cards";
 
-console.log(pg.defaults);
+pg.defaults.user = '';
 
 var client = new pg.Client(conString);
 client.connect(function(err){
