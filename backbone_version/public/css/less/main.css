@@ -1,3 +1,4 @@
+@import '../../public/vendor/dist/css/bootstrap.min.css';
 .centered-content {
   display: flex;
   justify-content: center;
