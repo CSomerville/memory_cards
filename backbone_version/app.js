@@ -1,12 +1,14 @@
 var fs = require('fs');
 var express = require('express');
 var morgan = require('morgan');
+var bodyParser = require('body-parser');
 
 var scoresApi = require('./controllers/scores.js');
 
 var app = express();
 
 app.use(morgan('dev'));
+app.use(bodyParser.json());
 app.use(express.static('public'));
 
 app.get('/', function(req, res){
@@ -16,6 +18,8 @@ app.get('/', function(req, res){
 })
 
 app.get('/api/scores', scoresApi.returnScores)
+
+app.post('/api/scores', scoresApi.saveScore);
 
 app.listen(3000, function(){
   console.log("Here I am");

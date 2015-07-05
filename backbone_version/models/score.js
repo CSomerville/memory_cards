@@ -19,7 +19,7 @@ Score.one = function(obj){
 
 Score.getAll = function(cb){
   pg.connect(conString, function(err, client, done){
-    client.query('SELECT * FROM scores ORDER BY turns ASC, elapsed_time DESC;', function(err, result){
+    client.query('SELECT * FROM scores ORDER BY turns ASC, elapsed_time DESC LIMIT 20;', function(err, result){
       done();
       scores = [];
       result.rows.forEach(function(row){
@@ -34,9 +34,9 @@ Score.getAll = function(cb){
 // takes a score model as argument and inserts it into the db.
 
 Score.save = function(obj, cb){
-  if (obj.initials && obj.turns && obj.elapsedTime) {
-    console.log('in here')
-    var queryString = "INSERT INTO scores (initials, turns, elapsed_time) VALUES ('" + obj.initials + "'," + obj.turns +","+ obj.elapsedTime +");"
+  console.log(obj)
+  if (obj.initials && obj.turns && obj.elapsed_time) {
+    var queryString = "INSERT INTO scores (initials, turns, elapsed_time) VALUES ('" + obj.initials + "'," + obj.turns +","+ obj.elapsed_time +");"
     pg.connect(conString, function(err, client, done){
       client.query(queryString, function(err, result){
         done();

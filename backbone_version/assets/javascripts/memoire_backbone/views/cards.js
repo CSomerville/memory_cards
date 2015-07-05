@@ -116,11 +116,3 @@ Memoire.CardsView = Backbone.View.extend({
     this.remove();
   }
 })
-
-
-
-
-
-
-
-

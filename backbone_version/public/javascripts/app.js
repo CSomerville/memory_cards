@@ -31,14 +31,6 @@ Memoire.Router = Backbone.Router.extend({
 })
 var Memoire = Memoire || {};
 
-Memoire.ScoresCollection = Backbone.Collection.extend({
-  url: '/api/scores',
-})
-var Memoire = Memoire || {};
-
-Memoire.ScoreModel = Backbone.Model.extend({})
-var Memoire = Memoire || {};
-
 Memoire.CardView = Backbone.View.extend({
 
   initialize: function(options){
@@ -193,15 +185,6 @@ Memoire.CardsView = Backbone.View.extend({
     this.remove();
   }
 })
-
-
-
-
-
-
-
-
-
 var Memoire = Memoire || {};
 
 Memoire.CounterView = Backbone.View.extend({
@@ -272,6 +255,87 @@ Memoire.DemoGameView = Backbone.View.extend({
 })
 var Memoire = Memoire || {};
 
+Memoire.GameEndView = Backbone.View.extend({
+
+  initialize: function(){
+    this.listenTo(this.collection, 'update', this.checkHiScores);
+    this.collection.fetch();
+
+    this.subViews = [];
+    this.hiScore = false;
+
+    this.timer = window.setTimeout(this.render.bind(this), 2000);
+  },
+
+  template: $('[data-template="game-end"]').text(),
+
+  className: 'game-end container-fluid',
+
+  adjustHeight: function(){
+    this.$el.css({ 'height': $(window).innerHeight()});
+  },
+
+  checkHiScores: function(){
+    var maxTurns = this.collection.max( function(e) { return e.get('turns') })
+
+    if (this.collection.length < 20) {
+      this.newHighScore();
+    } else if (this.model.get('turns') < maxTurns.get('turns')) {
+      this.newHighScore();
+    } else if (this.model.get('turns') === maxTurns.get('turns') &&
+      this.model.get('elapsed_time') > maxTurns.get('elapsed_time')) {
+      this.newHighScore();
+      
+    }
+  },
+
+  newHighScore: function(){
+    this.hiScore = true;
+  },
+
+  render: function(){
+
+    var whiteScreen = new Memoire.WhiteScreenView();
+    this.subViews.push(whiteScreen);
+    whiteScreen.render();
+
+    var plural = (this.model.get('turns') > 1)? 's' : '';
+
+    var options = {
+      plural: plural,
+      turns: this.model.get('turns'),
+      elapsed_time: Math.round(this.model.get('elapsed_time') / 1000)
+    }
+
+    this.$el.html(Mustache.render(this.template, options));
+
+    this.adjustHeight();
+    $(window).on('resize', function(){
+      this.adjustHeight();
+    }.bind(this))
+
+    if (this.hiScore) {
+      var newHighScoreView = new Memoire.NewHighScoreView({model: this.model});
+      this.subViews.push(newHighScoreView);
+      newHighScoreView.render();
+      this.$el.find(".game-end-main").html(newHighScoreView.el);
+    }
+
+    $('body').append(this.el);
+
+    if (this.hiScore) $('#initials-input').focus();
+  },
+
+  close: function(){
+    this.subViews.forEach(function(view){
+      view.close();
+    })
+    window.clearTimeout(this.timer);
+    this.remove();
+  }
+})
+var Memoire = Memoire || {};
+
 Memoire.HiScoresView = Backbone.View.extend({
 
   initialize: function(){
@@ -323,6 +387,37 @@ Memoire.HiScoresView = Backbone.View.extend({
 })
 var Memoire = Memoire || {};
 
+Memoire.NewHighScoreView = Backbone.View.extend({
+
+  events: {
+    'input input': 'uppercase',
+    'submit': 'saveScore'
+  },
+
+  template: $('[data-template="new-hi-score"]').text(),
+
+  uppercase: function(){
+    $('#initials-input').val($('#initials-input').val().replace(/[^a-z,A-Z]/g, "").toUpperCase());
+  },
+
+  saveScore: function(event){
+    event.preventDefault();
+    this.model.set('initials', $('#initials-input').val());
+    this.model.save(null, {success: function(){
+      window.location.href = '/#hi-scores';
+    }});
+  },
+
+  render: function(){
+    this.$el.html(this.template);
+  },
+
+  close: function(){
+    this.remove();
+  }
+})
+var Memoire = Memoire || {};
+
 Memoire.PlayGameView = Backbone.View.extend({
 
   initialize: function(){
@@ -331,6 +426,10 @@ Memoire.PlayGameView = Backbone.View.extend({
       turns: 1,
       elapsed_time: new Date()
     })
+
+    // this triggers a cheat used in development
+    this.input = [];
+    $(window).on('keydown', this.blazeThrough.bind(this));
   },
 
   adjustHeight: function(){
@@ -353,7 +452,7 @@ Memoire.PlayGameView = Backbone.View.extend({
     counter.on('countFinished', function(){
       counter.close();
       whiteScreen.close();
-      var cards = _.find(this.subViews, function(view) { return _.has( view, 'subViews') })
+      var cards = _.find(this.subViews, function(view) { return view.subViews.length === 18 })
       cards.revealCards();
 
       cards.on('turnTaken', function(){
@@ -361,10 +460,40 @@ Memoire.PlayGameView = Backbone.View.extend({
       }.bind(this))
 
       cards.on('gameComplete', function(){
-        console.log('game done');
-      })
+
+        this.model.set('elapsed_time', new Date() - this.model.get('elapsed_time'))
+        var gameEnd = new Memoire.GameEndView({
+          model: this.model,
+          collection: new Memoire.ScoresCollection({ model: Memoire.ScoreModel })
+        });
+
+        this.subViews.push(gameEnd);
+
+      }.bind(this))
     }.bind(this))
 
+  },
+
+// cheat code to aid in development
+  blazeThrough: function(event){
+
+    var ans = [66, 76, 65, 90, 69];
+
+    this.input.push(event.keyCode);
+
+    if (this.input.length >= 5) {
+      if (_.intersection(this.input, ans).length === 5) {
+        var cards = _.find(this.subViews, function(view) { return view.subViews.length === 18 })
+
+        while (_.has(_.groupBy(cards.subViews, 'matched'), 'false')) {
+          var one = _.sample(_.groupBy(cards.subViews, 'matched').false)
+          one.$el.find('img').trigger('click')
+
+          var other = _.find(cards.subViews, function(e) { return e.image === one.image && e.cid !== one.cid })
+          other.$el.find('img').trigger('click');
+        }  
+      }
+    }
   },
 
   render: function(){
@@ -388,6 +517,7 @@ Memoire.PlayGameView = Backbone.View.extend({
     this.subViews.forEach(function(view, i){
       view.close();
     });
+    if (this.timer) window.clearTimeout(this.timer);
     this.remove();
   }
 })
@@ -479,6 +609,16 @@ Memoire.WhiteScreenView = Backbone.View.extend({
   close: function(){
     this.remove();
   }
+})
+var Memoire = Memoire || {};
+
+Memoire.ScoresCollection = Backbone.Collection.extend({
+  url: '/api/scores',
+})
+var Memoire = Memoire || {};
+
+Memoire.ScoreModel = Backbone.Model.extend({
+  url: '/api/scores'
 })
 // create backbone router on page load.
 

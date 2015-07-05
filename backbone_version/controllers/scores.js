@@ -8,3 +8,9 @@ ScoresApi.returnScores = function(req, res){
     res.json(result);
   })
 }
+
+ScoresApi.saveScore = function(req, res) {
+  Score.save(req.body, function(err, result){
+    res.json(result);
+  })
+}

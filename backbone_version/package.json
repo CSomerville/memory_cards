@@ -5,6 +5,7 @@
   "author": "Colby Somerville",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.13.1",
     "express": "^4.13.0",
     "morgan": "^1.6.0",
     "mustache": "^2.1.2",
