@@ -6,6 +6,10 @@ Memoire.DemoGameView = Backbone.View.extend({
     $('body').append(this.el);
   },
 
+  adjustHeight: function(){
+    this.$el.css({ 'height': $(window).innerHeight() });
+  },
+
   playDemo: function(){
 
     this.game = setInterval(function(){
@@ -25,6 +29,11 @@ Memoire.DemoGameView = Backbone.View.extend({
   },
 
   render: function(){
+    this.adjustHeight();
+    $(window).on('resize', function(){
+      this.adjustHeight();
+    }.bind(this))
+
     var cards = new Memoire.CardsView();
     this.subViews.push(cards);
     this.$el.append(cards.el);

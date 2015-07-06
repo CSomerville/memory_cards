@@ -220,6 +220,10 @@ Memoire.DemoGameView = Backbone.View.extend({
     $('body').append(this.el);
   },
 
+  adjustHeight: function(){
+    this.$el.css({ 'height': $(window).innerHeight() });
+  },
+
   playDemo: function(){
 
     this.game = setInterval(function(){
@@ -239,6 +243,11 @@ Memoire.DemoGameView = Backbone.View.extend({
   },
 
   render: function(){
+    this.adjustHeight();
+    $(window).on('resize', function(){
+      this.adjustHeight();
+    }.bind(this))
+
     var cards = new Memoire.CardsView();
     this.subViews.push(cards);
     this.$el.append(cards.el);
@@ -612,13 +621,13 @@ Memoire.WhiteScreenView = Backbone.View.extend({
 })
 var Memoire = Memoire || {};
 
-Memoire.ScoresCollection = Backbone.Collection.extend({
-  url: '/api/scores',
+Memoire.ScoreModel = Backbone.Model.extend({
+  url: '/api/scores'
 })
 var Memoire = Memoire || {};
 
-Memoire.ScoreModel = Backbone.Model.extend({
-  url: '/api/scores'
+Memoire.ScoresCollection = Backbone.Collection.extend({
+  url: '/api/scores',
 })
 // create backbone router on page load.
 

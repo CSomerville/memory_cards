@@ -15,12 +15,14 @@ body {
 }
 
 .one-card {
+  height: 33%;
   img {
+    max-height: 100%;
     max-width: 100%;
-    max-height: 33vh;
   }
 }
 .all-cards {
+  height: 100%;
   text-align: center;
 }
 
@@ -137,5 +139,11 @@ body {
   .btn:hover {
     background-color: @main_everything;
     color: white;    
+  }
+}
+
+@media (max-width: 767px) {
+  .one-card {
+    height: 17%;
   }
 }
