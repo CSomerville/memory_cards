@@ -56,6 +56,9 @@ body {
   align-items: center;
 }
 .hi-scores header a {
+  display: inline-block;
+}
+.hi-scores header a {
   color: #403643;
   text-decoration: none;
   border-style: solid;
