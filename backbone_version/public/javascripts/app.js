@@ -31,6 +31,16 @@ Memoire.Router = Backbone.Router.extend({
 })
 var Memoire = Memoire || {};
 
+Memoire.ScoresCollection = Backbone.Collection.extend({
+  url: '/api/scores',
+})
+var Memoire = Memoire || {};
+
+Memoire.ScoreModel = Backbone.Model.extend({
+  url: '/api/scores'
+})
+var Memoire = Memoire || {};
+
 Memoire.CardView = Backbone.View.extend({
 
   initialize: function(options){
@@ -469,18 +479,21 @@ Memoire.PlayGameView = Backbone.View.extend({
       }.bind(this))
 
       cards.on('gameComplete', function(){
-
-        this.model.set('elapsed_time', new Date() - this.model.get('elapsed_time'))
-        var gameEnd = new Memoire.GameEndView({
-          model: this.model,
-          collection: new Memoire.ScoresCollection({ model: Memoire.ScoreModel })
-        });
-
-        this.subViews.push(gameEnd);
-
+        this.setupGameEnd();
       }.bind(this))
-    }.bind(this))
 
+    }.bind(this))
+  },
+
+  setupGameEnd: function(){
+    
+    this.model.set('elapsed_time', new Date() - this.model.get('elapsed_time'))
+    var gameEnd = new Memoire.GameEndView({
+      model: this.model,
+      collection: new Memoire.ScoresCollection({ model: Memoire.ScoreModel })
+    });
+
+    this.subViews.push(gameEnd);
   },
 
 // cheat code to aid in development
@@ -618,16 +631,6 @@ Memoire.WhiteScreenView = Backbone.View.extend({
   close: function(){
     this.remove();
   }
-})
-var Memoire = Memoire || {};
-
-Memoire.ScoreModel = Backbone.Model.extend({
-  url: '/api/scores'
-})
-var Memoire = Memoire || {};
-
-Memoire.ScoresCollection = Backbone.Collection.extend({
-  url: '/api/scores',
 })
 // create backbone router on page load.
 

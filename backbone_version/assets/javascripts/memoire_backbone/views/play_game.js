@@ -42,18 +42,21 @@ Memoire.PlayGameView = Backbone.View.extend({
       }.bind(this))
 
       cards.on('gameComplete', function(){
-
-        this.model.set('elapsed_time', new Date() - this.model.get('elapsed_time'))
-        var gameEnd = new Memoire.GameEndView({
-          model: this.model,
-          collection: new Memoire.ScoresCollection({ model: Memoire.ScoreModel })
-        });
-
-        this.subViews.push(gameEnd);
-
+        this.setupGameEnd();
       }.bind(this))
-    }.bind(this))
 
+    }.bind(this))
+  },
+
+  setupGameEnd: function(){
+    
+    this.model.set('elapsed_time', new Date() - this.model.get('elapsed_time'))
+    var gameEnd = new Memoire.GameEndView({
+      model: this.model,
+      collection: new Memoire.ScoresCollection({ model: Memoire.ScoreModel })
+    });
+
+    this.subViews.push(gameEnd);
   },
 
 // cheat code to aid in development
