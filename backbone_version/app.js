@@ -21,6 +21,6 @@ app.get('/api/scores', scoresApi.returnScores)
 
 app.post('/api/scores', scoresApi.saveScore);
 
-app.listen(3000, function(){
+app.listen(8000, function(){
   console.log("Here I am");
 })
