@@ -13,7 +13,7 @@ gulp.task('less', function(cb){
 gulp.task('css', ['less'], function(){
   return gulp.src(['./node_modules/bootstrap/dist/css/bootstrap.min.css', './public/css/less/*.css'])
     .pipe(concat('main.css'))
-    .pipe(gulp.dest('./public/css/'));
+    .pipe(gulp.dest('./public/css/less/'));
 })
 
 gulp.task('scripts', function(){
