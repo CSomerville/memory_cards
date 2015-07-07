@@ -1,5 +1,5 @@
 # Memory Cards
-#### A card matching game for children and child-like adults in a sunny glade full of wild animals, some extinct.
+#### A card matching game for children and child-like adults in a sunny glade full of wild animals, some extinct. [Live Demo](http://104.131.60.34:8000)
 ---------
 #### My plan is to implement this game in a few different frameworks, as a way to extend my knowledge. So far, only the backbone version is active.
 
