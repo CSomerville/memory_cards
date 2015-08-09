@@ -1,3 +1,6 @@
 backbone_version/node_modules/
 backbone_version/public/vendor
 backbone_version/public/images
+
+angular_version/build/
+angular_version/node_modules
