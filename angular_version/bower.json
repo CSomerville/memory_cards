@@ -1,0 +1,14 @@
+{
+  "name": "memory_cards_angular",
+  "version": "0.0.0",
+  "homepage": "https://github.com/CSomerville/memory_cards",
+  "authors": [
+    "Colby Somerville <colby.somerville@gmail.com>"
+  ],
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "angular": "~1.4.3"
+  }
+}
