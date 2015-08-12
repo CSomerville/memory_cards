@@ -3,8 +3,16 @@
 <head>
   <meta charset='utf-8'>
   <title>memory cards</title>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/main.css">
+  <script type="text/javascript" src="/static/bundle.js"></script>
 </head>
-<body>
-  <img src='/static/images/businesscard_birdie.jpg'>
+<body ng-app="app" ng-controller="play as play">
+  <div class="all-cards">
+    <div ng-repeat="card in play.shuffled track by card.id" class="holds-card">
+      <img class="card" ng-src='/static/images/{{card.animal}}'>
+    </div>
+  </div>
+
 </body>
 </html>
