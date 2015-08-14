@@ -1,5 +1,5 @@
 angular.module('cards', [])
-  .factory('cards', function(){
+  .factory('cards', ['$timeout', function($timeout){
     var cards = {};
 
     cards.animals = ['businesscard_birdie.jpg', 'businesscard_blue_dino_luxe.jpg', 'businesscard_camel.jpg', 
@@ -13,7 +13,7 @@ angular.module('cards', [])
       var deck = cards.animals.concat(cards.animals)
       // converts array of strings to array of objects with ids and flipped status
       return deck.map(function(el, index){
-        return {id: index, animal: el, flipped: false, flippable: true }
+        return {id: index, animal: el, flipped: false, flippable: true, matched: false }
       })
     }
 
@@ -31,29 +31,41 @@ angular.module('cards', [])
       return cards.shuffled;
     }
 
-    cards.flipCard = function(cardId) {
+    cards.getCardIndexById = function(cardId) {
       for (var i = 0; i < cards.shuffled.length; i++) {
-        if (cards.shuffled[i].id === cardId && 
-          cards.shuffled[i].flippable) {
-          cards.shuffled[i].flipped = (cards.shuffled[i].flipped === true) ? false : true;
-          break;
+        if (cards.shuffled[i].id === cardId) {
+          return i;
         }
       }
     }
 
-    cards.checkForMatch = function() {
-      var unmatched = [];
-      cards.shuffled.forEach(function(el){
-        if (el.flipped) {
-          if (unmatched.indexOf(el.animal) === -1) {
-            unmatched.push(el.animal);
-          } else {
-            unmatched.splice(unmatched.indexOf(el.animal), 1);
-          }
+    cards.flipCard = function(i) {
+      if (cards.shuffled[i].flippable) {
+        cards.shuffled[i].flipped = (cards.shuffled[i].flipped) ? false : true;
+      }
+    }
+
+    cards.checkForMatch = function(i) {
+      var animal = cards.shuffled[i].animal;
+
+      for (var index = 0; index < cards.shuffled.length; index++) {
+        var el = cards.shuffled[index];
+        if (el.animal === animal && index !== i && el.flipped) {
+          el.matched = true;
+          cards.shuffled[i].matched = true;
+        } else if (index !== i && el.flipped && !el.matched) {
+          var j = index;
+          $timeout(function(){
+            cards.flipCard(j);            
+          }, 1000)
         }
-      })
-      console.log(unmatched);
+      }
+      if (!cards.shuffled[i].matched) {
+        $timeout(function(){
+          cards.flipCard(i);            
+        }, 1000)
+      }
     }
 
     return cards;
-  })
+  }])
