@@ -10,12 +10,11 @@ angular.module('cards', [])
 
     cards.makeDeck = function() {
       // doubles the array
-      cards.deck = cards.animals.concat(cards.animals)
-      // adds ids and flipped status
-      cards.deck = cards.deck.map(function(el, index){
+      var deck = cards.animals.concat(cards.animals)
+      // converts array of strings to array of objects with ids and flipped status
+      return deck.map(function(el, index){
         return {id: index, animal: el, flipped: false, flippable: true }
       })
-      return cards.deck;
     }
 
     // fisher-yates shuffle
@@ -40,6 +39,20 @@ angular.module('cards', [])
           break;
         }
       }
+    }
+
+    cards.checkForMatch = function() {
+      var unmatched = [];
+      cards.shuffled.forEach(function(el){
+        if (el.flipped) {
+          if (unmatched.indexOf(el.animal) === -1) {
+            unmatched.push(el.animal);
+          } else {
+            unmatched.splice(unmatched.indexOf(el.animal), 1);
+          }
+        }
+      })
+      console.log(unmatched);
     }
 
     return cards;

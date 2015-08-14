@@ -10,7 +10,7 @@
 <body ng-app="app" ng-controller="play as play">
   <div class="all-cards">
     <div ng-repeat="card in play.shuffled track by card.id" class="holds-card">
-      <img class="card" ng-click='play.flipCard(card.id)' ng-src='/static/images/{{ card.flipped ? card.animal : play.back }}'>
+      <img class="card" ng-click='play.cardClicked(card.id)' ng-src='/static/images/{{ card.flipped ? card.animal : play.back }}'>
     </div>
   </div>
 
