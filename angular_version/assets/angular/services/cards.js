@@ -46,24 +46,26 @@ angular.module('cards', [])
     }
 
     cards.checkForMatch = function(i) {
+      // holds candidate string to look for match;
       var animal = cards.shuffled[i].animal;
 
       for (var index = 0; index < cards.shuffled.length; index++) {
         var el = cards.shuffled[index];
+
+        // if match found
         if (el.animal === animal && index !== i && el.flipped) {
           el.matched = true;
           cards.shuffled[i].matched = true;
+          break;
+          
+        // if card is flipped and doesn't match, turn them both back over
         } else if (index !== i && el.flipped && !el.matched) {
-          var j = index;
           $timeout(function(){
-            cards.flipCard(j);            
+            cards.flipCard(index);            
+            cards.flipCard(i);            
           }, 1000)
+          break;
         }
-      }
-      if (!cards.shuffled[i].matched) {
-        $timeout(function(){
-          cards.flipCard(i);            
-        }, 1000)
       }
     }
 
