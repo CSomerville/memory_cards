@@ -40,10 +40,35 @@ angular.module('cards', [])
     }
 
     cards.flipCard = function(i) {
+      console.log(cards.shuffled[i]);
       if (cards.shuffled[i].flippable) {
         cards.shuffled[i].flipped = (cards.shuffled[i].flipped) ? false : true;
+        if (cards.shuffled[i].flipped) {
+          toggleFlippable(i, false);
+          return true;
+        }
+      } else {
+        // tells the controller if it wasn't flippable.
+        return false;
       }
     }
+
+    cards.setFlippableAll = function(value){
+      cards.shuffled.forEach(function(el, i){
+        if (!el.matched) toggleFlippable(i, value);
+      })
+    }
+
+    var toggleFlippable = function(i, value){
+      cards.shuffled[i].flippable = value;
+    }
+
+    var setMatched = function(i) {
+      cards.shuffled[i].matched = true;
+      toggleFlippable(i, false);
+    }
+
+
 
     cards.checkForMatch = function(i) {
       // holds candidate string to look for match;
@@ -54,13 +79,17 @@ angular.module('cards', [])
 
         // if match found
         if (el.animal === animal && index !== i && el.flipped) {
-          el.matched = true;
-          cards.shuffled[i].matched = true;
+          setMatched(index);
+          setMatched(i);
           break;
-          
+
         // if card is flipped and doesn't match, turn them both back over
         } else if (index !== i && el.flipped && !el.matched) {
+          cards.setFlippableAll(false);
           $timeout(function(){
+            cards.setFlippableAll(true);
+            // toggleFlippable(index, true);
+            // toggleFlippable(i, true);
             cards.flipCard(index);            
             cards.flipCard(i);            
           }, 1000)
