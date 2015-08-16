@@ -22,10 +22,10 @@ angular.module('play', ['cards'])
 
     var flipAll = function() {
       for (var i = 0; i < self.shuffled.length; i++) {
-        if (!cards.shuffled[i].matched) cards.flipCard(i);
+        cards.flipCard(i);
       }      
     }
-    
+
     flipAll();
     $timeout(function() {
       cards.setFlippableAll(true);

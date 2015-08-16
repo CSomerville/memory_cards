@@ -40,7 +40,6 @@ angular.module('cards', [])
     }
 
     cards.flipCard = function(i) {
-      console.log(cards.shuffled[i]);
       if (cards.shuffled[i].flippable) {
         cards.shuffled[i].flipped = (cards.shuffled[i].flipped) ? false : true;
         if (cards.shuffled[i].flipped) {

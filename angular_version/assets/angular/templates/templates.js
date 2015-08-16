@@ -1,0 +1,2 @@
+angular.module("templates", []).run(["$templateCache", function($templateCache) {$templateCache.put("hiscores.html","<div ng-controller=\"hiscores as hiscores\">\n  <h1>Hi Scores</h1>\n</div>");
+$templateCache.put("play.html","<div ng-controller=\"play as play\">\n  <h1>Play</h1>\n</div>");}]);

@@ -7,7 +7,7 @@ module.exports = function(req, res) {
 
   var path = url.parse(req.url).pathname;
   
-  if (path === '/' && req.method === 'GET') {
+  if (path.slice(0, 7) === '/memory' && req.method === 'GET') {
     mainControl.index(req, res);
   }
 

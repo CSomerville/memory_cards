@@ -4,6 +4,7 @@ var concat = require('gulp-concat');
 var less = require('gulp-less');
 var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
+var templateCache = require('gulp-angular-templatecache');
 
 gulp.task('images', function(){
   return gulp.src('assets/images/**/*.jpg')
@@ -17,8 +18,15 @@ gulp.task('styles', function(){
     .pipe(gulp.dest('build/'))
 })
 
+gulp.task('templates', function(){
+  return gulp.src('assets/angular/templates/**/*.html')
+    .pipe(templateCache({standalone: true}))
+    .pipe(gulp.dest('assets/angular/templates'))
+})
+
 gulp.task('scripts', function(){
   return gulp.src(['assets/bower_components/angular/angular.js',
+    'assets/bower_components/angular-route/angular-route.js',
     'assets/angular/**/*.js'])
     .pipe(sourcemaps.init())
     .pipe(concat('bundle.js'))
@@ -33,7 +41,8 @@ gulp.task('scripts', function(){
 
 gulp.task('watch', function(){
   gulp.watch('assets/less/**/*.less', ['styles']);
+  gulp.watch('assets/angular/templates/**/*.html', ['templates'])
   gulp.watch('assets/angular/**/*.js', ['scripts']);
 });
 
-gulp.task('default', ['styles', 'scripts', 'watch']);
+gulp.task('default', ['styles', 'scripts', 'templates', 'watch']);
