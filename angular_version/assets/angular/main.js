@@ -4,25 +4,18 @@ angular.module('app', ['ngRoute', 'play', 'hiscores', 'templates'])
 
   .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider){
     $routeProvider
-    .when('/memory', 
-      {
-        template: '<h1>errrm</h1>'
-      }
-    )
     .when('/memory/play',
       {
         templateUrl: 'play.html',
-        controller: 'play',
-        controllerAs: 'play'
       }
     )
     .when('/memory/hiscores',
       {
-        templateUrl: 'hiscores.html',
-        controller: 'hiscores',
-        controllerAs: 'hiscores'      
+        templateUrl: 'hiscores.html',     
       }
-    );
+    ).otherwise({
+      redirectTo: '/memory/hiscores'
+    });
 
     $locationProvider.html5Mode(true);
 

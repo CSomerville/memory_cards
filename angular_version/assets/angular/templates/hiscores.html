@@ -1,3 +1,7 @@
-<div ng-controller="hiscores as hiscores">
-  <h1>Hi Scores</h1>
+<div class="full-height" ng-controller="hiscores as hiscores">
+  <div class="all-cards">
+    <div ng-repeat="card in hiscores.shuffled track by card.id" class="holds-card">
+      <img class="card" ng-click='hiscores.cardClicked(card.id)' ng-src='/static/images/{{ card.flipped ? card.animal : hiscores.back }}'>
+    </div>
+  </div>
 </div>

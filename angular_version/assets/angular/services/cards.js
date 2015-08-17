@@ -67,8 +67,6 @@ angular.module('cards', [])
       toggleFlippable(i, false);
     }
 
-
-
     cards.checkForMatch = function(i) {
       // holds candidate string to look for match;
       var animal = cards.shuffled[i].animal;

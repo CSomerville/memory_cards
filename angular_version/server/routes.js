@@ -6,7 +6,7 @@ var staticControl = require('./controllers/static');
 module.exports = function(req, res) {
 
   var path = url.parse(req.url).pathname;
-  
+
   if (path.slice(0, 7) === '/memory' && req.method === 'GET') {
     mainControl.index(req, res);
   }
@@ -19,5 +19,8 @@ module.exports = function(req, res) {
     apiControl.index(req, res);
   }
 
-  else res.end('error');
+  else {
+    res.writeHead('302', {'Location': '/memory'});
+    res.end();
+  }
 };
