@@ -24,10 +24,18 @@ gulp.task('templates', function(){
     .pipe(gulp.dest('assets/angular/templates'))
 })
 
-gulp.task('scripts', function(){
+gulp.task('vendor', function(){
   return gulp.src(['assets/bower_components/angular/angular.js',
-    'assets/bower_components/angular-route/angular-route.js',
-    'assets/angular/**/*.js'])
+    'assets/bower_components/angular-route/angular-route.js'])
+    .pipe(sourcemaps.init())
+    .pipe(concat('vendor.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('build'));
+})
+
+gulp.task('scripts', function(){
+  return gulp.src(['assets/angular/**/*.js'])
     .pipe(sourcemaps.init())
     .pipe(concat('bundle.js'))
     .pipe(uglify())
@@ -45,4 +53,4 @@ gulp.task('watch', function(){
   gulp.watch('assets/angular/**/*.js', ['scripts']);
 });
 
-gulp.task('default', ['styles', 'scripts', 'templates', 'watch']);
+gulp.task('default', ['styles', 'vendor', 'scripts', 'templates', 'watch']);

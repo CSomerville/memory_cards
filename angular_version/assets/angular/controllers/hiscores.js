@@ -1,11 +1,17 @@
 angular.module('hiscores', ['cards'])
-  .controller('hiscores', ['cards', '$interval', '$scope', function(cards, $interval, $scope){
+  .controller('hiscores', ['cards', '$interval', '$scope', '$http', function(cards, $interval, $scope, $http){
     var self = this;
     var counter = 0;
     var lastCount;
     var play;
 
     angular.element(document).ready(function(){
+      $http.get('/api/hiscores')
+        .then(function(response){
+          // console.log(response)
+        }, function(response){
+          console.log(response)
+        });
       var scrolling = angular.element(document.querySelector('.scrolling'));
       scrolling.css('top', '100%');
       var hiScoreScroll = $interval(function(){
