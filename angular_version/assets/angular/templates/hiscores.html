@@ -23,7 +23,21 @@
             <h4>Seconds of Play</h4>
           </div>
         </div>
+        <div ng-repeat="score in hiscores.scores" class="row">
+          <div class="col-3">
+            <p>{{score.initials}}</p>
+          </div>
+          <div class="col-3">
+            <p>{{score.turns}}</p>
+          </div>
+          <div class="col-6">
+            <p>{{ score.elapsedTime / 1000 | number: 0 }}</p>
+          </div>          
+        </div>
       </div>
     </div>
+    <footer>
+      <a href="rawaan-alkhatib.com">Cards by Rawaan Alkhatib</a>
+    </footer>
   </div>
 </div>

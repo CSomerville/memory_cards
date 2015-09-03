@@ -8,7 +8,8 @@ angular.module('hiscores', ['cards'])
     angular.element(document).ready(function(){
       $http.get('/api/hiscores')
         .then(function(response){
-          // console.log(response)
+          self.scores = response.data;
+          console.log(response.data);
         }, function(response){
           console.log(response)
         });
