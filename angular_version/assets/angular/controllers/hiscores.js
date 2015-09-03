@@ -5,6 +5,18 @@ angular.module('hiscores', ['cards'])
     var lastCount;
     var play;
 
+    angular.element(document).ready(function(){
+      var scrolling = angular.element(document.querySelector('.scrolling'));
+      scrolling.css('top', '100%');
+      var hiScoreScroll = $interval(function(){
+        if (parseFloat(scrolling.css('top')) < -100) {
+          scrolling.css('top', '100%');          
+        }
+        scrolling.css('top', parseFloat(scrolling.css('top')) - 0.5 + '%');
+      }, 100)
+      
+    })
+
     $scope.$on('$destroy', function(){
       if (angular.isDefined(play)) {
         $interval.cancel(play);

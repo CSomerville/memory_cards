@@ -1,22 +1,27 @@
 @text-color: #000000;
+@secondary-color: #ffffff;
 
 html, body, .full-height {
   height: 100%;
 }
 
 body {
-  font-family: 'Josefin Sans'
+  font-family: 'Josefin Slab'
 }
 
 .btn {
   border-color: @text-color;
   border-width: 3px;
   border-style: solid;
-  border-radius: 10px;
-  padding: 0.5% 2%;
+  border-radius: 5px;
+  padding: 1% 2% 0.75% 2%;
   color: @text-color;
   font-size: 36px;
-
+  &:hover {
+    background-color: @text-color;
+    color: @secondary-color;
+    border-color: @secondary-color;
+  }
 }
 
 .all-cards {
@@ -43,7 +48,7 @@ body {
   height: 100%;
   width: 100%;
   z-index: 1;
-  background-color: #ffffff;
+  background-color: @secondary-color;
   opacity: 0.7;
   position: absolute;
   top: 0;
@@ -59,11 +64,29 @@ body {
 .holds-title {
   height: 10%;
   text-align: center;
+  padding: 2% 0;
   a {
     .btn;
-    text-decoration: none;
-    margin-top: 20px;
+    text-decoration: none;    
   }
+}
+
+.holds-hiscores {
+  height: 80%;
+  text-align: center;
+  overflow: hidden;
+}
+
+.scrolling {
+  width: 50%;
+  position: relative;
+  display: inline-block;
+  top: 100%;
+  -webkit-transition: top 100ms linear;
+  -moz-transition: top 100ms linear;
+  -ms-transition: top 100ms linear;
+  -o-transition: top 100ms linear;
+  transition: top 100ms linear;
 }
 
 
