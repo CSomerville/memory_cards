@@ -5,18 +5,18 @@ angular.module('hiscores', ['cards'])
     var lastCount;
     var play;
 
+    $http.get('/api/hiscores')
+      .then(function(response){
+        self.scores = response.data;
+      });
+
     angular.element(document).ready(function(){
-      $http.get('/api/hiscores')
-        .then(function(response){
-          self.scores = response.data;
-          console.log(response.data);
-        }, function(response){
-          console.log(response)
-        });
       var scrolling = angular.element(document.querySelector('.scrolling'));
       scrolling.css('top', '100%');
       var hiScoreScroll = $interval(function(){
+        if (scrolling.css('display') === 'none') scrolling.css('display', 'inline-block');
         if (parseFloat(scrolling.css('top')) < -100) {
+          scrolling.css('display', 'none')
           scrolling.css('top', '100%');          
         }
         scrolling.css('top', parseFloat(scrolling.css('top')) - 0.5 + '%');
