@@ -58,6 +58,15 @@ angular.module('cards', [])
       })
     }
 
+    cards.allFlipped = function(){
+      for (var i = 0; i < cards.shuffled.length; i++) {
+        if (!cards.shuffled[i].flipped) {
+          return false;
+        }
+      }
+      return true;
+    }
+
     var toggleFlippable = function(i, value){
       cards.shuffled[i].flippable = value;
     }
@@ -78,7 +87,7 @@ angular.module('cards', [])
         if (el.animal === animal && index !== i && el.flipped) {
           setMatched(index);
           setMatched(i);
-          break;
+          return true;
 
         // if card is flipped and doesn't match, turn them both back over
         } else if (index !== i && el.flipped && !el.matched) {
@@ -90,7 +99,7 @@ angular.module('cards', [])
             cards.flipCard(index);            
             cards.flipCard(i);            
           }, 1000)
-          break;
+          return false;
         }
       }
     }
