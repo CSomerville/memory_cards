@@ -1,5 +1,5 @@
 angular.module('play', ['cards'])
-  .controller('play', ['cards', '$timeout', '$interval', '$scope', function(cards, $timeout, $interval, $scope){
+  .controller('play', ['cards', '$timeout', '$interval', '$scope', '$rootScope', function(cards, $timeout, $interval, $scope, $rootScope){
 
     var self = this;
     var counter = 0;
@@ -7,6 +7,21 @@ angular.module('play', ['cards'])
     var lastCount, reveal, countDown;
 
     self.back = cards.back;
+
+    /* cheat for debugging: outer loop flips card--
+    inner loop finds match, flips that one */
+    var blazeThrough = function() {
+      for (var i = 0; i < self.shuffled.length; i++) {
+        if (!self.shuffled[i].flipped) {
+          cards.flipCard(i);
+          for (var j = i + 1; j < self.shuffled.length; j++) {
+            if (self.shuffled[i].animal === self.shuffled[j].animal) {
+              cards.flipCard(j);
+            }
+          }
+        }
+      }
+    }
 
     self.cardClicked = function(cardId) {
       var i = cards.getCardIndexById(cardId);
@@ -47,7 +62,7 @@ angular.module('play', ['cards'])
           hideWhiteScreen();
           $interval.cancel(countDown);
           countDown = undefined;
-          revealAllCards();
+          blazeThrough();
         }
         self.startCount--;
       }.bind(cards), 1000)     
