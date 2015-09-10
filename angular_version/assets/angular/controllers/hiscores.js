@@ -43,8 +43,8 @@ angular.module('hiscores', ['cards'])
       })
     };
 
-    var simulatedPlay = function() {
-      var play = $interval(function(){
+    $scope.simulatedPlay = function() {
+      play = $interval(function(){
         var unflipped = getIdsOfUnflipped(self.shuffled);
         if (unflipped.length) {          
           var chosen = unflipped[Math.floor(Math.random() * unflipped.length)];
@@ -62,7 +62,7 @@ angular.module('hiscores', ['cards'])
       }, 2000)
     }
 
-    simulatedPlay();
+    $scope.simulatedPlay();
 
 
   }])
