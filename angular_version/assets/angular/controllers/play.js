@@ -1,10 +1,10 @@
 angular.module('play', ['cards'])
-  .controller('play', ['cards', '$timeout', function(cards, $timeout){
+  .controller('play', ['cards', '$timeout', '$scope', function(cards, $timeout, $scope){
 
     var self = this;
     var counter = 0;
     var turns = 1;
-    var lastCount;
+    var lastCount, reveal;
 
     self.back = cards.back;
 
@@ -33,8 +33,15 @@ angular.module('play', ['cards'])
     }
 
     flipAll();
-    $timeout(function() {
+    reveal = $timeout(function() {
       cards.setFlippableAll(true);
       flipAll();
-    }.bind(cards), 5000)
+    }.bind(cards), 5000);
+
+    $scope.$on('$destroy', function(){
+      if (angular.isDefined(reveal)) {
+        $timeout.cancel(reveal);
+        reveal = undefined;
+      }
+    })
   }]);
