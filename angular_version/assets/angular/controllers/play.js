@@ -1,5 +1,5 @@
 angular.module('play', ['cards'])
-  .controller('play', ['cards', '$timeout', '$scope', function(cards, $timeout, $scope){
+  .controller('play', ['cards', '$timeout', '$interval', '$scope', function(cards, $timeout, $interval, $scope){
 
     var self = this;
     var counter = 0;
@@ -40,15 +40,29 @@ angular.module('play', ['cards'])
       console.log(turns);
     }
 
-    showWhiteScreen();
-    countDown = $timeout(function(){
-      hideWhiteScreen();
+    var initialize = function(){
+      self.startCount = 3;
+      countDown = $interval(function(){
+        if (self.startCount === 1) {
+          hideWhiteScreen();
+          $interval.cancel(countDown);
+          countDown = undefined;
+          revealAllCards();
+        }
+        self.startCount--;
+      }.bind(cards), 1000)     
+    }
+
+    initialize();
+
+    var revealAllCards = function(){    
       flipAll();
       reveal = $timeout(function() {
         cards.setFlippableAll(true);
         flipAll();
       }.bind(cards), 5000);
-    }.bind(cards), 3000)
+    }
+
 
     $scope.$on('$destroy', function(){
       if (angular.isDefined(reveal)) {
@@ -56,7 +70,7 @@ angular.module('play', ['cards'])
         reveal = undefined;
       }
       if (angular.isDefined(countDown)) {
-        $timeout.cancel(countDown);
+        $interval.cancel(countDown);
         countDown = undefined;
       }
     })

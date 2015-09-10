@@ -4,5 +4,9 @@
       <img class="card" ng-click='play.cardClicked(card.id)' ng-src='/static/images/{{ card.flipped ? card.animal : play.back }}'>
     </div>
   </div>
-  <div class="white-screen" ng-hide="play.whiteScreen"></div>
+  <div class="white-screen" ng-hide="play.whiteScreen">
+    <div class="start-count">
+      <h1>{{play.startCount}}</h1>
+    </div>
+  </div>
 </div>
