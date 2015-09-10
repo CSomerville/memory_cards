@@ -4,7 +4,7 @@ angular.module('play', ['cards'])
     var self = this;
     var counter = 0;
     var turns = 1;
-    var lastCount, reveal;
+    var lastCount, reveal, countDown;
 
     self.back = cards.back;
 
@@ -28,20 +28,36 @@ angular.module('play', ['cards'])
       }      
     }
 
+    var showWhiteScreen = function(){
+      self.whiteScreen = false;
+    };
+
+    var hideWhiteScreen = function(){
+      self.whiteScreen = true;
+    }
+
     var endGame = function() {
       console.log(turns);
     }
 
-    flipAll();
-    reveal = $timeout(function() {
-      cards.setFlippableAll(true);
+    showWhiteScreen();
+    countDown = $timeout(function(){
+      hideWhiteScreen();
       flipAll();
-    }.bind(cards), 5000);
+      reveal = $timeout(function() {
+        cards.setFlippableAll(true);
+        flipAll();
+      }.bind(cards), 5000);
+    }.bind(cards), 3000)
 
     $scope.$on('$destroy', function(){
       if (angular.isDefined(reveal)) {
         $timeout.cancel(reveal);
         reveal = undefined;
+      }
+      if (angular.isDefined(countDown)) {
+        $timeout.cancel(countDown);
+        countDown = undefined;
       }
     })
   }]);
