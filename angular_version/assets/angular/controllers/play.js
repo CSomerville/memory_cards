@@ -4,7 +4,9 @@ angular.module('play', ['cards'])
     var self = this;
     var counter = 0;
     var turns = 1;
-    var lastCount, reveal, countDown;
+    var lastCount, reveal, countDown, elapsedTime;
+
+    self.endScreen = true;
 
     self.back = cards.back;
 
@@ -21,6 +23,7 @@ angular.module('play', ['cards'])
           }
         }
       }
+      endGame();
     }
 
     self.cardClicked = function(cardId) {
@@ -43,23 +46,22 @@ angular.module('play', ['cards'])
       }      
     }
 
-    var showWhiteScreen = function(){
-      self.whiteScreen = false;
-    };
-
-    var hideWhiteScreen = function(){
-      self.whiteScreen = true;
-    }
-
     var endGame = function() {
+      gameFinished = $timeout(function() {
+        self.endScreen = false;        
+      }, 2000)
+
+      console.log(new Date() - elapsedTime)
       console.log(turns);
+
     }
 
     var initialize = function(){
       self.startCount = 3;
+      elapsedTime = new Date();
       countDown = $interval(function(){
         if (self.startCount === 1) {
-          hideWhiteScreen();
+          self.startScreen = true;
           $interval.cancel(countDown);
           countDown = undefined;
           blazeThrough();
