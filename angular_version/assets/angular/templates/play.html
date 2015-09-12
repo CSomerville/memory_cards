@@ -10,5 +10,14 @@
     </div>
   </div>
   <div class="white-screen" ng-hide="play.endScreen">
+    <div>
+      <h1>Dope. Your game took {{play.turns}} turn{{play.turns === 1 ? '' : 's'}} and lasted {{play.elapsedTime / 1000 | number:0 }} seconds. {{ play.newHiScore ? 'That there is a new high score!' : ''}}</h1>
+    </div>
+    <div ng-show="play.newHiScore">
+      <input type="text">
+    </div>
+    <div>
+      <a href='/memory/play'>Play</a>
+    </div>
   </div>
 </div>

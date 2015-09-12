@@ -1,5 +1,5 @@
 angular.module('play', ['cards'])
-  .controller('play', ['cards', '$timeout', '$interval', '$scope', '$rootScope', function(cards, $timeout, $interval, $scope, $rootScope){
+  .controller('play', ['cards', '$timeout', '$interval', '$scope', '$rootScope', '$http', function(cards, $timeout, $interval, $scope, $rootScope, $http){
 
     var self = this;
     var counter = 0;
@@ -46,13 +46,59 @@ angular.module('play', ['cards'])
       }      
     }
 
+    // used to find current worst score, to see if there is a new
+    // hi score. As in golf, a high number of turns is a worse score.
+    // If more than one score has the same number of turns, elapsed
+    // play time is the tie breaker.
+    var findWorst = function(data) {
+      var mostTurns = 0;
+      var candidates = [];
+      for (var i = 0; i < data.length; i++) {
+        if (data.turns > mostTurns) {
+          mostTurns = data[i].turns;
+          candidates = [data[i]];
+        } else if (data[i].turns === mostTurns){
+          candidates.push(data[i]);
+        }
+      }
+      // if more than one score with same # of turns, look at elapsed time.
+      if (candidates.length > 1) {
+        var leastTime, index = 0;
+        for (var i = 0; i < candidates.length; i++) {
+          if (!leastTime || candidates[i].elapsedTime < leastTime) {
+            leastTime = candidates[i].elapsedTime;
+            index = i;
+          }
+        }
+        return candidates[index];
+
+      } else {
+        return candidates[0];
+      }
+    }
+
     var endGame = function() {
+
+      self.newHiScore = false;
+      self.elapsedTime = new Date() - elapsedTime;
+      self.turns = turns;
+
+      // gets old scores to check for new hiscore.
+      $http.get('api/hiscores')
+        .then(function(response){
+
+          var currentWorst = findWorst(response.data);
+
+          if (response.data.length < 20 ||
+            turns < currentWorst.turns ||
+            (turns === currentWorst.turns && elapsedTime < leastTime)) {
+            self.newHiScore = true;
+          }
+        })
+
       gameFinished = $timeout(function() {
         self.endScreen = false;        
       }, 2000)
-
-      console.log(new Date() - elapsedTime)
-      console.log(turns);
 
     }
 
