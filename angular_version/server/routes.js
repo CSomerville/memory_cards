@@ -19,6 +19,11 @@ module.exports = function(req, res) {
     apiControl.index(req, res);
   }
 
+  else if (path === '/api/hiscores' && req.method === 'POST') {
+    console.log('in here')
+    apiControl.create(req, res);
+  }
+
   else {
     res.writeHead('302', {'Location': '/memory'});
     res.end();

@@ -97,9 +97,20 @@ angular.module('play', ['cards'])
         })
 
       gameFinished = $timeout(function() {
-        self.endScreen = false;        
+        self.endScreen = false;
       }, 2000)
+    }
 
+    self.submitHiScore = function() {
+      console.log('in here')
+      $http.post('api/hiscores', {
+        turns: self.turns,
+        elapsedTime: self.elapsedTime,
+        initials: 'POP'
+      })
+        .then(function(response){
+          console.log(response);
+        })
     }
 
     var initialize = function(){
